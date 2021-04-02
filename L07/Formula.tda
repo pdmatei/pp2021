@@ -1,0 +1,80 @@
+The formula ADT
+
+Atom : Vars -> Formula
+Not : Formula -> Formula
+And : Formula x Formula -> Formula
+Or : Formula x Formula -> Formula
+
+Simple example:
+a ^ ~b
+And(Atom(a),Not(Atom(b)))
+
+We can omit Atom calls, and consider them as implicit. Any alphabetic symbol such as:
+p, will be interpreted as Atom(p).
+
+
+A more complicated example.
+(a V ~b V c) ^ (a V ~c) ^ b
+
+This formula can be constructed in several different, but equivalent ways.
+This is one of them: 
+
+And(Or(a,Or(Not(b),c)),And(a ,Not(c)),b)
+
+To make  this clear:
+a ^ b ^ c may be defined as:
+
+And(a,And(b,c)) and equivalently as And(And(a,b),c).
+
+To avoid this, and to make reading more legible, we can opt for a different ADT definition:
+
+Atom : Vars -> Formula
+Not : Formula -> Formula
+And : [Formula] -> Formula
+Or : [Formula] -> Formula   ==> where each list must contain at least two elements
+
+Instead of writing And([a,b,c]) we can write: And(a,b,c).
+
+Now, the previous formula becomes:
+And(Or(a,Not(b),c), Or(a,Not(c)), b)
+
+We can define a few useful operations such as:
+depth : Formula -> |N
+
+[Test]
+
+And a more interesting one:
+isCNF : Formula -> Bool
+
+To define it, we will need:
+isAtom : Formula -> Bool
+isAtom(Atom(x)) = True
+isAtom(Not(f)) = False
+isAtom(And([l])) = False
+isAtom(Or([l])) = False
+
+A literal is a variable or its negation.
+
+isLiteral(Atom(x)) = True
+isLiteral(Not(f)) = isAtom(f)
+isLiteral(And([l])) = False
+isLiteral(Or([l])) = False
+
+A clause is a literal or a disjunction of literals
+
+isClause(Atom(x)) = True
+isClause(Not(f)) = isAtom(f)
+isClause(Or(cons(lit2,cons(lit1,void)))) = isLiteral(lit2) ^ isLiteral(lit1)
+isClause(Or(cons(lit2,cons(lit1,cons(lit0,l))))) = isLiteral(lit2) ^ 
+                                                   isClause(Or(cons(lit1,cons(lit0,l))))
+
+
+isCNF(Atom(x)) = True
+isCNF(Not(f)) = isAtom(f)
+isCNF(Or(l)) = isClause(Or(l))
+isCNF(And(cons(c1,cons(c2,void)))) = isClause(c1) ^ isClause(c2)
+isCNF(And(cons(c1,cons(c2,cons(c3,l))))) = isClause(c1) ^ isCNF(cons(c2,cons(c3,l)))
+
+
+
+

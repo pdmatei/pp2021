@@ -1,0 +1,33 @@
+void : List
+cons : E x List -> List
+
+head : List -> E
+head(cons(e,l)) = e
+
+tail : List -> List
+tail(cons(e,l)) = l 
+
+append : List x List -> List
+append(void,l) = l
+append(cons(e,l),l') = cons(e,append(l,l'))
+
+size : List -> N
+size(void) = 0
+size(cons(e,l)) = 1 + size(l)
+
+reverse : List -> List
+reverse(void) = void
+reverse(cons(e,l)) = append(reverse(l),cons(e,void))
+
+
+
+
+
+
+
+
+
+
+
+
+
